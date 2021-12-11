@@ -9,7 +9,13 @@ use Doctrine\ORM\EntityManager;
 
 class IndexController extends AbstractController
 {
-  #[Route(path: "/")]
+    #[Route(path: "/", name: "accueil", httpMethod: "GET")]
+    public function accueil()
+    {
+        echo $this->twig->render('accueil/accueil.html.twig');
+    }
+
+  #[Route(path: "/createUser")]
   public function index(EntityManager $em)
   {
     $user = new User();
@@ -27,7 +33,7 @@ class IndexController extends AbstractController
     $em->flush();
   }
 
-  #[Route(path: "/contact", name: "contact", httpMethod: "POST")]
+  #[Route(path: "/contact", name: "contact", httpMethod: "GET")]
   public function contact()
   {
     echo $this->twig->render('index/contact.html.twig');
