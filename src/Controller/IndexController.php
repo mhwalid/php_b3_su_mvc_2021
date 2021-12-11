@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Config\TwigEnvironment;
 use App\Entity\User;
 use App\Routing\Attribute\Route;
 use DateTime;
 use Doctrine\ORM\EntityManager;
+use Service\MailService;
 
 class IndexController extends AbstractController
 {
@@ -38,4 +40,47 @@ class IndexController extends AbstractController
   {
     echo $this->twig->render('index/contact.html.twig');
   }
+
+    #[Route(path: "/mail/attach", name: "mailAttach", httpMethod: "GET")]
+    public function mailAttach(MailService $mail) {
+        $mail->sendMailWithAttach(
+            'basile.regnault@gmail.com',
+            'Basile',
+            'basile.regnault@gmail.com',
+            'basile',
+            'basile1',
+            'php-logo.png',
+            '',
+            ['shirken21gaming@gmail.com' , 'basile.regnault@gmail.com'],
+            true,
+            'customMail.html.twig'
+        );
+        echo $this->twig->render('mail/successSendMail.html.twig' , [
+            'titre' => 'Envoie Mail PJ',
+            'to' => 'basile.regnault@gmail.com',
+            'fromName' => 'Basile',
+            'subject' => 'basile'
+        ]);
+    }
+
+    #[Route(path: "/mail", name: "mail", httpMethod: "GET")]
+    public function mail(MailService $mail) {
+        $mail->sendMail(
+            'basile.regnault@gmail.com',
+            'Basile',
+            'basile.regnault@gmail.com',
+            'basile',
+            'basile1',
+            '',
+            ['shirken21gaming@gmail.com' , 'basile.regnault@gmail.com'],
+            true,
+            'customMail.html.twig'
+        );
+        echo $this->twig->render('mail/successSendMail.html.twig' , [
+            'titre' => 'Envoie Mail',
+            'to' => 'basile.regnault@gmail.com',
+            'fromName' => 'Basile',
+            'subject' => 'basile'
+        ]);
+    }
 }

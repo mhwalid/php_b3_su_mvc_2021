@@ -16,6 +16,7 @@ use App\DependencyInjection\Container;
 use App\Routing\RouteNotFoundException;
 use App\Routing\Router;
 use Doctrine\ORM\EntityManager;
+use Service\MailService;
 use Symfony\Component\Dotenv\Dotenv;
 use Twig\Environment;
 
@@ -32,10 +33,14 @@ $entityManager = $connection->init();
 $twigEnvironment = new TwigEnvironment();
 $twig = $twigEnvironment->init();
 
+// Mail
+$mail = new MailService();
+
 // Service Container
 $container = new Container();
 $container->set(EntityManager::class, $entityManager);
 $container->set(Environment::class, $twig);
+$container->set(MailService::class, $mail);
 
 // Routage
 $router = new Router($container);
