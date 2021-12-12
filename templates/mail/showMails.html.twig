@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des mails{% endblock %}
+
+
+{% block content %}
+    <h3 class="display-3 text-center mt-5">Liste des mails envoyés</h3>
+    <a class="btn btn-primary" href="/">Revenir a l'accueil</a>
+    <table class="table table-striped mt-5">
+        <thead>
+            <tr>
+                <th scope="col">Mail de l'envoyeur</th>
+                <th scope="col">Nom de l'envoyeur</th>
+                <th scope="col">Mail de reception</th>
+                <th scope="col">Sujet du mail</th>
+                <th scope="col">Message</th>
+                <th scope="col">Liste des cc</th>
+                <th scope="col">Piece Jointe</th>
+                <th scope="col">Reply To</th>
+                <th scope="col">Date d'envoie</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for mail in mails %}
+            <tr>
+                <th scope="row">{{ mail.fromName }}</th>
+                <td>{{ mail.fromMail }}</td>
+                <td>{{ mail.toMail }}</td>
+                <td>{{ mail.subject }}</td>
+                <td>{{ mail.message }}</td>
+                <td>
+                    {% for c in mail.cc %}
+                        {{ c }} /
+                    {% endfor %}
+                </td>
+                <td>{{ mail.fileName }}</td>
+                <td>{{ mail.replyToMail }}</td>
+                <td>{{ mail.dateSend | date('m/d/Y') }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -35,7 +35,7 @@ $twigEnvironment = new TwigEnvironment();
 $twig = $twigEnvironment->init();
 
 // Mail
-$mail = new MailService();
+$mail = new MailService($entityManager);
 
 // Errors
 $formError = new FormError();

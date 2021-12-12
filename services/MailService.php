@@ -2,7 +2,16 @@
 
 namespace Service;
 
+use App\Entity\Mail;
+use Doctrine\ORM\EntityManager;
+
 class MailService {
+
+    private $em;
+    public function __construct(EntityManager $em)
+    {
+        $this->em = $em;
+    }
 
     public function sendMail(
         string $fromMail,
@@ -25,6 +34,7 @@ class MailService {
         }
 
         mail($to, $subject , $message , $headers);
+        $this->_createMailInBDD($fromMail, $fromName, $to, $subject, $message, '' , $replyToMail , $cc);
     }
 
     public function sendMailWithAttach(
@@ -79,7 +89,9 @@ class MailService {
             $Allmessage .= $content."\r\n";
         }
         $Allmessage .= '--'.$boundary."\r\n";
+
         mail($to, $subject , $Allmessage , $headers);
+        $this->_createMailInBDD($fromMail, $fromName, $to, $subject, $message, $fileName , $replyToMail , $cc);
     }
 
     private function _getMailHeaders(string $fromName, string $fromMail, string $replyToMail , array $cc) {
@@ -114,5 +126,29 @@ class MailService {
             // Pour Windows
             return $projectDirectory . '\\templates\\mail\\' . $fileTemplateName;
         }
+    }
+
+    private function _createMailInBDD(
+        string $fromMail,
+        string $fromName,
+        string $to,
+        string $subject,
+        string $message,
+        string $fileName = '',
+        string $replyToMail = '',
+        array $cc = [],
+    ) {
+        $mail = new Mail();
+        $mail->setFromMail($fromMail);
+        $mail->setFromName($fromName);
+        $mail->setToMail($to);
+        $mail->setSubject($subject);
+        $mail->setMessage($message);
+        $mail->setFileName($fileName);
+        $mail->setReplyToMail($replyToMail);
+        $mail->setCc($cc);
+        $mail->setDateSend(new \DateTime());
+        $this->em->persist($mail);
+        $this->em->flush();
     }
 }

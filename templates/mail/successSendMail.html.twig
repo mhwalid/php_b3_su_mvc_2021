@@ -10,6 +10,10 @@
             <li class="list-group-item">Envoyé à : <strong>{{ to }}</strong></li>
             <li class="list-group-item">Sous le nom de : <strong>{{ fromName }}</strong> </li>
             <li class="list-group-item">Sujet du mail : <strong>{{ subject }}</strong></li>
+            {% if isPj %}
+                <li class="list-group-item">Piece Jointe : {{ fileName }}</li>
+            {% endif %}
+
         </ul>
         <a href="/" class="page-link mt-3">Retourner à la page d'accueil</a>
     </main>
