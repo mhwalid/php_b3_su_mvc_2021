@@ -14,14 +14,15 @@ class Connection
     $paths = [__DIR__ . "/../Entity"];
     $isDevMode = ($_ENV['APP_ENV'] === 'dev');
 
-
     $dbParams = [
       'driver'   => $_ENV['DB_DRIVER'],
       'host'     => $_ENV['DB_HOST'] . ':' . $_ENV['DB_PORT'],
-      'user'     => $_ENV['DB_USERNAME'],
+      'user'     => $_ENV['DB_USER'],
       'password' => $_ENV['DB_PASSWORD'],
       'dbname'   => $_ENV['DB_NAME'],
     ];
+
+  
 
     $config = Setup::createAnnotationMetadataConfiguration(
       $paths,

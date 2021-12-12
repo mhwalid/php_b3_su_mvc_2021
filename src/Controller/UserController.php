@@ -17,4 +17,5 @@ class UserController extends AbstractController
 
     echo $this->twig->render('user/list.html.twig', ['users' => $users]);
   }
+ 
 }

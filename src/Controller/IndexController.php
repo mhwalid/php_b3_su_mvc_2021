@@ -14,12 +14,12 @@ class IndexController extends AbstractController
   {
     $user = new User();
 
-    $user->setName("Bob")
+    $user->setName("aaaaaaaaa")
       ->setFirstName("John")
       ->setUsername("Bobby")
       ->setPassword("randompass")
       ->setEmail("bob@bob.com")
-      ->setBirthDate(new DateTime('1981-02-16'));
+      ->setBirthDate(new DateTime('2022-02-16'));
 
     // On demande au gestionnaire d'entités de persister l'objet
     // Attention, à ce moment-là l'objet n'est pas encore enregistré en BDD
@@ -27,7 +27,7 @@ class IndexController extends AbstractController
     $em->flush();
   }
 
-  #[Route(path: "/contact", name: "contact", httpMethod: "POST")]
+  #[Route(path: "/contact", name: "contact", httpMethod: "GET")]
   public function contact()
   {
     echo $this->twig->render('index/contact.html.twig');

@@ -14,10 +14,11 @@ class UserTest extends TestCase
   {
     
     $this->User = new User();
+    
   }
 
   public function TestGetID() {
-
+   
       $result = $this->User->getId();
       $this->assertIsInt($result);
   }
