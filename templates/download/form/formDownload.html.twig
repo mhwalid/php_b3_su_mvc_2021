@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="text-center">
-        <h4 class="display-4 mt-5 ">Telecharger un fichier via une url</h4>
+        <h4 class="display-4 mt-5 ">Télécharger un fichier via une URL</h4>
         <p class="text-danger">{{ errorMessage }}</p>
     </div>
     <form style="margin-left: 600px; margin-right: 600px; margin-top: 100px;" method="POST" action="/download/create">
@@ -11,7 +11,7 @@
             <input type="text" class="form-control" placeholder="Saisir une url" name="fileurl">
         </div>
         <p>URL pour tester : https://codedesign.fr/wp-content/uploads/2018/08/php-leader1.png</p>
-        <button type="submit" class="btn btn-primary mt-1">Telecharger fichier</button>
+        <button type="submit" class="btn btn-primary mt-1">Télécharger fichier</button>
     </form>
 
 {% endblock %}

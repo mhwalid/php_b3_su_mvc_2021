@@ -37,7 +37,7 @@ class DownloadFileService {
 
         $sessionCurl = curl_init();
         if(curl_setopt($sessionCurl, CURLOPT_URL, $url) ===  false) {
-            return 'Erreur dans la recuperation du fichier à telecharger';
+            return 'Erreur dans la récupération du fichier à télécharger';
         }
 
         $fp = fopen($filePath, 'w');
@@ -46,7 +46,7 @@ class DownloadFileService {
         }
 
         if(curl_setopt($sessionCurl, CURLOPT_FILE, $fp) === false) {
-            return 'Erreur dans le telechargement du fichier';
+            return 'Erreur dans le téléchargement du fichier';
         }
 
         if (curl_exec ($sessionCurl) === false) {

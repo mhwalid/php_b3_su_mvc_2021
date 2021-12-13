@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Login{% endblock %}
+
+
+{% block content %}
+ <div class="text-center">
+  <h1 class="display-3 mt-5">Connectez-vous</h1>
+  </div>
+    <form style="margin-left: 600px; margin-right: 600px; margin-top: 100px;" method="POST" action="/loginsend">
+    <div class="mb-3">
+            <label for="email" class="form-label">email</label>
+            <input type="email" class="form-control" placeholder="email" name="email">
+        </div>
+    
+    <div class="mb-3">
+        <label for="password" class="form-label">password</label>
+        <input type="password"  class="form-control" placeholder="password" id="password" name="password"  />
+    </div>
+ <button type="submit" class="btn btn-primary mt-1">Connecter </button>
+    </form>
+
+
+{% endblock %}

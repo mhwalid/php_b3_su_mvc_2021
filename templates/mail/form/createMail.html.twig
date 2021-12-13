@@ -10,11 +10,11 @@
     </div>
     <form style="margin-left: 600px; margin-right: 600px; margin-top: 100px;" method="POST" enctype="multipart/form-data" action="/mail/create">
         <div class="mb-3">
-            <label for="senderName" class="form-label">Nom de l'expediteur *</label>
+            <label for="senderName" class="form-label">Nom de l'expéditeur *</label>
             <input value="{{ values["senderName"] }}" type="text" class="form-control" placeholder="Saisir un nom" name="senderName">
         </div>
         <div class="mb-3">
-            <label for="senderMail" class="form-label">Mail de l'expediteur *</label>
+            <label for="senderMail" class="form-label">Mail de l'expéditeur *</label>
             <div class="input-group">
                 <span class="input-group-text" id="addonMailSender">@</span>
                 <input value="{{ values["senderMail"] }}" type="email" class="form-control" placeholder="Saisir le mail de l'expediteur" name="senderMail"
@@ -22,7 +22,7 @@
             </div>
         </div>
         <div class="mb-3">
-            <label for="receiverMail" class="form-label">Mail du recepteur *</label>
+            <label for="receiverMail" class="form-label">Mail du récepteur *</label>
             <div class="input-group mb-3">
                 <span class="input-group-text" id="addonMailReceiver">@</span>
                 <input value="{{ values["receiverMail"] }}" type="email" class="form-control" placeholder="Saisir le mail du recepteur"
@@ -55,7 +55,7 @@
             </div>
         </div>
         <div class="mb-3">
-            <label for="formFile" class="form-label">Importer des pieces jointes</label>
+            <label for="formFile" class="form-label">Importer des pièces jointes</label>
             <input class="form-control" type="file" name="formFile">
         </div>
         <p>Format accepté : .jpg / .png / .gif / .jpeg / .pdf</p>

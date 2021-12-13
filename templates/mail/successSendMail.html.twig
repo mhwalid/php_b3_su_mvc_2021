@@ -4,14 +4,14 @@
 
 {% block content %}
     <main class="text-center">
-        <h3 class="display-3 text-center mt-5">Mail envoyé avec succes</h3>
+        <h3 class="display-3 text-center mt-5">Mail envoyé avec succès</h3>
         <h5 class="display-5 mt-5"  >Resumé de votre mail : </h5>
         <ul class="list-group list-group-flush">
             <li class="list-group-item">Envoyé à : <strong>{{ to }}</strong></li>
             <li class="list-group-item">Sous le nom de : <strong>{{ fromName }}</strong> </li>
             <li class="list-group-item">Sujet du mail : <strong>{{ subject }}</strong></li>
             {% if fileName %}
-                <li class="list-group-item">Piece Jointe : {{ fileName }}</li>
+                <li class="list-group-item">Pièce Jointe : {{ fileName }}</li>
             {% endif %}
         </ul>
         <a href="/" class="btn btn-success">Retourner à la page d'accueil</a>

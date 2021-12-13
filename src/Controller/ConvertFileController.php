@@ -54,7 +54,7 @@ class ConvertFileController extends AbstractController{
             // Vérifie l'extension du fichier
             $ext = pathinfo($filename, PATHINFO_EXTENSION);
             if(!array_key_exists($ext, $allowed)) {
-                 return "Erreur : Veuillez sélectionner un format de fichier valide";
+                 return "Erreur : Veuillez sélectionnait un format de fichier valide";
             }
 
             // Taille du fichier < 5MO
@@ -70,7 +70,7 @@ class ConvertFileController extends AbstractController{
                 }
                 move_uploaded_file($_FILES["formFile"]["tmp_name"], $pathFile);
             } else {
-                return 'Probleme dans l\'upload de fichier';
+                return 'Probl7me dans l\'upload de fichier';
             }
         } else {
             return 'Erreur avec le fichier';
