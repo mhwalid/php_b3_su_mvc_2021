@@ -8,7 +8,7 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-class ContainerTest extends TestCase
+class ContainerTest extends TestCase 
 {
   private Container $container;
 

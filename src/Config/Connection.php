@@ -22,6 +22,8 @@ class Connection
       'dbname'   => $_ENV['DB_NAME'],
     ];
 
+  
+
     $config = Setup::createAnnotationMetadataConfiguration(
       $paths,
       $isDevMode,

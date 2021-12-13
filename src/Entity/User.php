@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Auth\UserInterface;
 use Doctrine\ORM\Mapping as ORM;
 use DateTime;
 
@@ -9,7 +10,7 @@ use DateTime;
  * @ORM\Entity
  * @ORM\Table(name="users")
  */
-class User
+class User  implements UserInterface
 {
   /**
    * @ORM\Id
@@ -43,10 +44,18 @@ class User
    */
   private string $email;
 
-  /**
+    /**
    * @ORM\Column(type="datetime", nullable=true)
    */
   private DateTime $birthDate;
+
+    /**
+     * @ORM\Column( type="boolean", nullable=true)
+     */
+    private $enabled = true;
+
+
+  
 
   public function getId(): int
   {
@@ -124,4 +133,22 @@ class User
 
     return $this;
   }
+
+  public function isEnabled(): bool
+  {
+      return $this->enabled;
+  }
+     
+
+    /**
+     * @param bool $enabled
+     * @return User
+     */
+    public function setEnabled(bool $enabled): self
+    {
+        $this->enabled = $enabled;
+        return $this;
+    }
+
+     
 }
