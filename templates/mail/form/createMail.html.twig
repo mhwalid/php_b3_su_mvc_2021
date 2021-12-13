@@ -8,16 +8,16 @@
         <p class="text-danger">{{ errorEmpty }}</p>
         <p class="text-danger">{{ errorMessageUpload }}</p>
     </div>
-    <form style="margin-left: 600px; margin-right: 600px; margin-top: 100px;" method="POST" enctype="multipart/form-data" action="/createMail">
+    <form style="margin-left: 600px; margin-right: 600px; margin-top: 100px;" method="POST" enctype="multipart/form-data" action="/mail/create">
         <div class="mb-3">
             <label for="senderName" class="form-label">Nom de l'expediteur *</label>
-            <input value="{{ values["senderName"] }}" type="text" class="form-control" placeholder="Entrer un nom.." name="senderName">
+            <input value="{{ values["senderName"] }}" type="text" class="form-control" placeholder="Saisir un nom" name="senderName">
         </div>
         <div class="mb-3">
             <label for="senderMail" class="form-label">Mail de l'expediteur *</label>
             <div class="input-group">
                 <span class="input-group-text" id="addonMailSender">@</span>
-                <input value="{{ values["senderMail"] }}" type="email" class="form-control" placeholder="Entrer le mail de l'expediteur" name="senderMail"
+                <input value="{{ values["senderMail"] }}" type="email" class="form-control" placeholder="Saisir le mail de l'expediteur" name="senderMail"
                        aria-describedby="addonMailSender">
             </div>
         </div>
@@ -25,7 +25,7 @@
             <label for="receiverMail" class="form-label">Mail du recepteur *</label>
             <div class="input-group mb-3">
                 <span class="input-group-text" id="addonMailReceiver">@</span>
-                <input value="{{ values["receiverMail"] }}" type="email" class="form-control" placeholder="Entrer le mail du recepteur"
+                <input value="{{ values["receiverMail"] }}" type="email" class="form-control" placeholder="Saisir le mail du recepteur"
                        name="receiverMail" aria-describedby="addonMailReceiver">
             </div>
         </div>
@@ -40,17 +40,17 @@
         </div>
         <div class="mb-3">
             <label for="subject" class="form-label">Sujet du mail *</label>
-            <input value="{{ values["subject"] }}" type="text" class="form-control" placeholder="Entrer un sujet.." name="subject">
+            <input value="{{ values["subject"] }}" type="text" class="form-control" placeholder="Saisir un sujet" name="subject">
         </div>
         <div class="mb-3">
             <label for="message" class="form-label">Message *</label>
-            <input value="{{ values["message"] }}" type="text" class="form-control" placeholder="Entrer votre message.." name="message">
+            <input value="{{ values["message"] }}" type="text" class="form-control" placeholder="Saisir votre message" name="message">
         </div>
         <div class="mb-3">
             <label for="replyMail" class="form-label">Reply to</label>
             <div class="input-group">
                 <span class="input-group-text" id="addonMailReply">@</span>
-                <input value="{{ values["replyMail"] }}" type="email" class="form-control" placeholder="Entrer un mail a reply to" name="replyMail"
+                <input value="{{ values["replyMail"] }}" type="email" class="form-control" placeholder="Saisir un mail a reply to" name="replyMail"
                        aria-describedby="addonMailReply">
             </div>
         </div>
@@ -58,6 +58,7 @@
             <label for="formFile" class="form-label">Importer des pieces jointes</label>
             <input class="form-control" type="file" name="formFile">
         </div>
+        <p>Format accepté : .jpg / .png / .gif / .jpeg / .pdf</p>
         <p><sup>(*)</sup> Obligatoire</p>
         <button type="submit" class="btn btn-primary mt-1">Envoyer le mail</button>
     </form>

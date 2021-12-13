@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+
+    <div class="text-center">
+        <h4 class="display-4 mt-5 text-center">Convertion de fichier</h4>
+        <p class="text-danger">{{ importError }}</p>
+    </div>
+    <form style="margin-left: 600px; margin-right: 600px; margin-top: 100px;" method="POST" enctype="multipart/form-data" action="/convert/csv/create">
+        <div class="mb-3">
+            <label for="formFile" class="form-label">Importer le fichier CSV à convertir</label>
+            <input accept=".csv" required class="form-control" type="file" name="formFile">
+        </div>
+        <button type="submit" class="btn btn-primary mt-1">Convertir</button>
+    </form>
+
+{% endblock %}

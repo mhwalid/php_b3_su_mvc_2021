@@ -4,9 +4,11 @@
 
 
 {% block content %}
-    <h3 class="display-3 text-center mt-5">Liste des mails envoyés</h3>
-    <a class="btn btn-primary" href="/">Revenir a l'accueil</a>
-    <table class="table table-striped mt-5">
+    <div class="text-center">
+        <h3 class="display-3 mt-5">Suivis des mails envoyés</h3>
+        <a class="btn btn-success" href="/">Revenir à l'accueil</a>
+    </div>
+    <table style="font-size: 14px; width: 80%; margin: auto;" class="table table-bordered table-striped mt-5">
         <thead>
             <tr>
                 <th scope="col">Mail de l'envoyeur</th>
@@ -35,7 +37,7 @@
                 </td>
                 <td>{{ mail.fileName }}</td>
                 <td>{{ mail.replyToMail }}</td>
-                <td>{{ mail.dateSend | date('m/d/Y') }}</td>
+                <td>{{ mail.dateSend | date('d/m/Y') }}</td>
             </tr>
         {% endfor %}
         </tbody>

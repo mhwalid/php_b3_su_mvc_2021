@@ -17,6 +17,8 @@ use App\Routing\RouteNotFoundException;
 use App\Routing\Router;
 use App\Utils\FormError;
 use Doctrine\ORM\EntityManager;
+use Service\ConvertCsvToExcelService;
+use Service\DownloadFileService;
 use Service\MailService;
 use Symfony\Component\Dotenv\Dotenv;
 use Twig\Environment;
@@ -34,9 +36,12 @@ $entityManager = $connection->init();
 $twigEnvironment = new TwigEnvironment();
 $twig = $twigEnvironment->init();
 
-// Mail
+// Mail Service
 $mail = new MailService($entityManager);
-
+// ConvertFile Service
+$convertFile = new ConvertCsvToExcelService();
+// DownloadFile Service
+$downloadFile = new DownloadFileService();
 // Errors
 $formError = new FormError();
 
@@ -46,6 +51,8 @@ $container->set(EntityManager::class, $entityManager);
 $container->set(Environment::class, $twig);
 $container->set(MailService::class, $mail);
 $container->set(FormError::class, $formError);
+$container->set(ConvertCsvToExcelService::class, $convertFile);
+$container->set(DownloadFileService::class, $downloadFile);
 
 // Routage
 $router = new Router($container);
@@ -62,5 +69,5 @@ try {
   $router->execute($requestUri, $requestMethod);
 } catch (RouteNotFoundException $e) {
   http_response_code(404);
-  echo $twig->render('404.html.twig', ['title' => $e->getMessage()]);
+  echo $twig->render('utils/404.html.twig', ['title' => $e->getMessage()]);
 }

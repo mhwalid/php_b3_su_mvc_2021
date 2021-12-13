@@ -2,21 +2,35 @@
 
 namespace App\Controller;
 
-use App\Controller\AbstractController;
 use App\Entity\Mail;
 use App\Routing\Attribute\Route;
 use App\Utils\FormError;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use Service\MailService;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class MailController extends AbstractController
 {
-    #[Route(path: "/mail", name: "showMail", httpMethod: "GET")]
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    #[Route(path: "/mail", httpMethod: "GET", name: "showMail")]
     public function showMail() {
         echo $this->twig->render('mail/form/createMail.html.twig');
     }
 
-    #[Route(path: "/show/mails", name: "showMails", httpMethod: "GET")]
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    #[Route(path: "/mails", httpMethod: "GET", name: "showMails")]
     public function showMails(EntityManager $em) {
         $mails = $em->getRepository(Mail::class)->findAll();
         echo $this->twig->render('mail/showMails.html.twig' , [
@@ -24,91 +38,73 @@ class MailController extends AbstractController
         ]);
     }
 
-    #[Route(path: "/createMail", name: "createMail", httpMethod: "POST")]
+    /**
+     * @throws OptimisticLockException
+     * @throws SyntaxError
+     * @throws ORMException
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    #[Route(path: "/mail/create", httpMethod: "POST", name: "createMail")]
     public function createMail(MailService $mail , FormError $error)
     {
         if (!empty($_POST)) {
                 // Verification des champs obligatoires
-                $tabObligatoire = [$_POST['senderName'], $_POST['senderMail'] , $_POST['receiverMail'] , $_POST['subject'], $_POST['message']];
+                $tabObligatoire = array($_POST['senderName'], $_POST['senderMail'] , $_POST['receiverMail'] , $_POST['subject'], $_POST['message']);
                 $errorEmpty = $error->validateEmpty($tabObligatoire);
+                $errorMessageUploadOrSuccess = true;
 
                 // Verification si une PJ est importer et upload de celle ci dans le dossier attachment dans public/
-                if (!empty($_FILES['size'])) {
-                    $errorMessageUpload = $this->_uploadFile();
-                } else {
-                    $errorMessageUpload = true;
+                if (!empty($_FILES["formFile"]['size'])) {
+                    $errorMessageUploadOrSuccess = $this->_uploadFile($_FILES["formFile"]['name']);
                 }
 
                 // Si il n'y a pas d'erreur dans l'upload et que les champs obligatoire ne sont pas vide
-                if ($errorEmpty === true && $errorMessageUpload === true) {
+                if ($errorEmpty === true && $errorMessageUploadOrSuccess === true) {
                     // Recuperation de chaque addresse mail cc transformer en array
                     $arrayMailCc = $this->_fillArrayCC();
                     // On regarde les erreurs dans le formulaire
-                    $noError = $this->_validateFormError($error, $arrayMailCc);
+                    $isNotError = $this->_validateFormError($error, $arrayMailCc);
 
-                    if ($noError){
+                    if ($isNotError){
                         if ($_FILES["formFile"]['size'] > 0) {
-                            $this->_mailAttach($mail, $_POST['senderMail'], $_POST['senderName'],$_POST['receiverMail'], $_POST['subject'], $_POST['message'] , $_FILES["formFile"]["name"] , $_POST['replyMail'] , $arrayMailCc);
+                            $mail->sendMailWithAttach($_POST['senderMail'], $_POST['senderName'], $_POST['receiverMail'], $_POST['subject'], $_POST['message'], $_FILES["formFile"]["name"], $_POST['replyMail'], $arrayMailCc);
+                            $title = 'Envoie mail PJ';
+                            $this->_renderSuccessMail($title , $_POST['receiverMail'], $_POST['senderMail'], $_POST['subject'] , $_FILES["formFile"]["name"]);
                         } else {
-                            $this->_mail($mail, $_POST['senderMail'], $_POST['senderName'],$_POST['receiverMail'], $_POST['subject'], $_POST['message'], $_POST['replyMail'] , $arrayMailCc);
+                            $mail->sendMail($_POST['senderMail'], $_POST['senderName'], $_POST['receiverMail'], $_POST['subject'], $_POST['message'], $_POST['replyMail'], $arrayMailCc);
+                            $title = 'Envoie mail';
+                            $this->_renderSuccessMail($title , $_POST['receiverMail'],  $_POST['senderMail'], $_POST['subject']);
                         }
                     }
                 } else {
                     // On renvoie les erreurs et les informations saisis par l'utilisateur
                     echo $this->twig->render('mail/form/createMail.html.twig' , [
                         'errorEmpty' => $errorEmpty,
-                        'errorUploadFile' => $errorMessageUpload,
+                        'errorUploadFile' => $errorMessageUploadOrSuccess,
                         'values' => $_POST
                     ]);
                 }
         }
     }
 
-    private function _mailAttach($mail , $from, $fromName , $to , $subject, $message, $filesName = '' , $replyTo = '' , $cc = [], $customMail = false , $fileTemplateName = '') {
-        $mail->sendMailWithAttach(
-            $from,
-            $fromName,
-            $to,
-            $subject,
-            $message,
-            $filesName,
-            $replyTo,
-            $cc,
-            $customMail,
-            $fileTemplateName
-        );
-        $title = 'Envoie mail PJ';
-        $this->_renderSuccessMail($title , $to, $from, $subject , true, $filesName);
-    }
-
-    private function _mail($mail , $from, $fromName , $to , $subject, $message, $replyTo = '' , $cc = [], $customMail = false , $fileTemplateName = '') {
-        $mail->sendMail(
-            $from,
-            $fromName,
-            $to,
-            $subject,
-            $message,
-            $replyTo,
-            $cc,
-            $customMail,
-            $fileTemplateName
-        );
-        $title = 'Envoie mail';
-        $this->_renderSuccessMail($title , $to, $fromName, $subject);
-    }
-
-    private function _renderSuccessMail($title , $to, $fromName, $subject, $isPj = false, $filesName = '') {
+    /**
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws LoaderError
+     */
+    private function _renderSuccessMail($title , $to, $fromName, $subject, $filesName = '') {
         echo $this->twig->render('mail/successSendMail.html.twig' , [
             'titre' => $title,
             'to' => $to,
             'fromName' => $fromName,
             'subject' => $subject,
-            'isPj' => $isPj,
             'fileName' => $filesName
         ]);
     }
 
-    private function _fillArrayCC(){
+    private function _fillArrayCC(): array
+    {
         $arrayMailCc = [];
         if (!empty($_POST['ccMail'])) {
             $arrayMailCc = explode(",", $_POST['ccMail']);
@@ -131,6 +127,7 @@ class MailController extends AbstractController
                     $errorMailMessage = $error->validateMail($c, $key);
                 }
             }
+            // Si il y a des erreurs on les renvoies au formulaire
             if ($errorLenghtMessage !== true || $errorMailMessage !== true) {
                 echo $this->twig->render('mail/form/createMail.html.twig' , [
                     'errorLength' => $errorLenghtMessage,
@@ -143,7 +140,7 @@ class MailController extends AbstractController
         return true;
     }
 
-    private function _uploadFile(): bool|string
+    private function _uploadFile(string $fileName): bool|string
     {
         if(isset($_FILES["formFile"]) && $_FILES["formFile"]["error"] == 0){
             $allowed = array("jpg" => "image/jpg", "jpeg" => "image/jpeg", "gif" => "image/gif", "png" => "image/png"  , "pdf" => "application/pdf" );
@@ -156,26 +153,33 @@ class MailController extends AbstractController
             }
             // Vérifie le type du fichier
             if(in_array($filetype, $allowed)){
-                $fileName = $this->_getWdAttachmentDocument() . $_FILES["formFile"]["name"];
-                if(file_exists($fileName)){
-                    unlink($fileName);
+                $uploadDirFile = $this->_getWdAttachmentDocument() . $fileName;
+                //var_dump($pathFile);
+                if(file_exists($uploadDirFile)){
+                    unlink($uploadDirFile);
                 }
-                move_uploaded_file($_FILES["formFile"]["tmp_name"], $fileName);
+                // Creation et moove du fichier importer dans le repertoire
+                move_uploaded_file($_FILES["formFile"]["tmp_name"], $uploadDirFile);
             } else {
-                return 'Probleme dans l\'upload de fichier';
+                return 'Probleme dans l\'upload de fichier verifier le format de la PJ. Format accepté : .jpg / .png / .gif / .jpeg / .pdf';
             }
         }
         return true;
     }
 
 
-    private function _getWdAttachmentDocument(): string {
-        $projectDirectory = dirname(__DIR__);
-        // Pour les machines tournant sous linux
+    /**
+     * @return string
+     */
+    private function _getWdAttachmentDocument(): string
+    {
+        // On monte de deux niveau pour atteindre la racine du projet
+        $projectDirectory = dirname(__DIR__ , 2);
+        // Pour les machines sous linux
         if (PHP_OS === 'Linux') {
             return $projectDirectory . '/public/mailAttachment/';
         } else {
-            // Pour Windows
+            // Pour les machines sous Windows
             return $projectDirectory . '\\public\\mailAttachment\\';
         }
     }

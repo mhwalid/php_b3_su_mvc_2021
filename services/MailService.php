@@ -3,16 +3,32 @@
 namespace Service;
 
 use App\Entity\Mail;
+use DateTime;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\Exception\ORMException;
 
 class MailService {
 
-    private $em;
+    private EntityManager $_em;
     public function __construct(EntityManager $em)
     {
-        $this->em = $em;
+        $this->_em = $em;
     }
 
+    /**
+     * Envoie d'un mail simple, sans piece jointe
+     * @param string $fromMail
+     * @param string $fromName
+     * @param string $to
+     * @param string $subject
+     * @param string $message
+     * @param string $replyToMail
+     * @param array $cc
+     * @param bool $customMail True = utilisation d'un template twig par defaut false
+     * @param string $fileTemplateName Le template twig
+     * @param bool $storeInBdd True = Stocke le mail en BDD, par defaut true
+     */
     public function sendMail(
         string $fromMail,
         string $fromName,
@@ -22,21 +38,33 @@ class MailService {
         string $replyToMail = '',
         array $cc = [],
         bool $customMail = false,
-        string $fileTemplateName = ''
+        string $fileTemplateName = '',
+        bool $storeInBdd = true
     ) {
         // Headers
         $headers = $this->_getMailHeaders($fromName, $fromMail,$replyToMail, $cc);
         $headers .='Content-Type:text/html; charset="uft-8"'."\n";
         $headers .='Content-Transfer-Encoding: 8bit' ."\r\n";
 
-        if ($customMail) {
+        if ($customMail && $fileTemplateName !== '') {
             $message = file_get_contents($this->_getWdMailTemplate($fileTemplateName)) ."\r\n";
         }
 
         mail($to, $subject , $message , $headers);
-        $this->_createMailInBDD($fromMail, $fromName, $to, $subject, $message, '' , $replyToMail , $cc);
+
+        if ($storeInBdd){
+            try {
+                $this->_createMailInBDD($fromMail, $fromName, $to, $subject, $message, '', $replyToMail, $cc);
+            } catch (OptimisticLockException | ORMException $e) {
+                echo 'Exception reçue : ',  $e->getMessage(), "\n";
+            }
+        }
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     public function sendMailWithAttach(
         string $fromMail,
         string $fromName,
@@ -47,7 +75,8 @@ class MailService {
         string $replyToMail = '',
         array $cc = [],
         bool $customMail = false,
-        string $fileTemplateName = ''
+        string $fileTemplateName = '',
+        bool $storeInBdd = true
     ) {
         // Clé aléatoire de limite pour definir un separateur
         $boundary = md5(uniqid(microtime(), TRUE));
@@ -60,11 +89,12 @@ class MailService {
         // Texte Message
         $Allmessage = '--'.$boundary."\r\n";
         $Allmessage .= 'Content-Type:text/html; charset="uft-8"'."\n";
-        if ($customMail) {
+        if ($customMail && $fileTemplateName !== '') {
             $Allmessage .= file_get_contents($this->_getWdMailTemplate($fileTemplateName)) ."\r\n" ;
         } else {
             $Allmessage .= $message ."\r\n";
         }
+
         // Pièce jointe
         $fullFileName = $this->_getWdAttachmentDocument($fileName);
         if (file_exists($fullFileName))
@@ -91,10 +121,23 @@ class MailService {
         $Allmessage .= '--'.$boundary."\r\n";
 
         mail($to, $subject , $Allmessage , $headers);
-        $this->_createMailInBDD($fromMail, $fromName, $to, $subject, $message, $fileName , $replyToMail , $cc);
+
+        // On stocke le mail en BDD pour pouvoir avoir un suivis des mails
+        if ($storeInBdd){
+            $this->_createMailInBDD($fromMail, $fromName, $to, $subject, $message, $fileName , $replyToMail , $cc);
+        }
     }
 
-    private function _getMailHeaders(string $fromName, string $fromMail, string $replyToMail , array $cc) {
+    /**
+     * Une partie du Header du mail
+     * @param string $fromName
+     * @param string $fromMail
+     * @param string $replyToMail
+     * @param array $cc On peut avoir plusieurs mail de cc
+     * @return string
+     */
+    private function _getMailHeaders(string $fromName, string $fromMail, string $replyToMail , array $cc): string
+    {
         $headers = "MIME-Version: 1.0\r\n";
         $headers .='From:'.$fromName.'<'.$fromMail.'>'."\n";
         $headers .='Reply-To: '.$replyToMail."\n";
@@ -106,9 +149,13 @@ class MailService {
         return $headers;
     }
 
+    /**
+     * @param $fileName
+     * @return string
+     */
     private function _getWdAttachmentDocument($fileName): string {
         $projectDirectory = dirname(__DIR__);
-        // Pour les machines tournant sous linux
+        // Pour les machines sous linux
         if (PHP_OS === 'Linux') {
             return $projectDirectory . '/public/mailAttachment/' . $fileName;
         } else {
@@ -117,17 +164,25 @@ class MailService {
         }
     }
 
+    /**
+     * @param $fileTemplateName
+     * @return string
+     */
     private function _getWdMailTemplate($fileTemplateName): string {
         $projectDirectory = dirname(__DIR__);
-        // Pour les machines tournant sous linux
+        // Pour les machines sous linux
         if (PHP_OS === 'Linux') {
-            return $projectDirectory . '/templates/mail/' . $fileTemplateName;
+            return $projectDirectory . '/templates/mail/custom/' . $fileTemplateName;
         } else {
             // Pour Windows
-            return $projectDirectory . '\\templates\\mail\\' . $fileTemplateName;
+            return $projectDirectory . '\\templates\\mail\\custom\\' . $fileTemplateName;
         }
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException|\Doctrine\ORM\ORMException
+     */
     private function _createMailInBDD(
         string $fromMail,
         string $fromName,
@@ -147,8 +202,8 @@ class MailService {
         $mail->setFileName($fileName);
         $mail->setReplyToMail($replyToMail);
         $mail->setCc($cc);
-        $mail->setDateSend(new \DateTime());
-        $this->em->persist($mail);
-        $this->em->flush();
+        $mail->setDateSend(new DateTime());
+        $this->_em->persist($mail);
+        $this->_em->flush();
     }
 }
