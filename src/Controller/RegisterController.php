@@ -2,26 +2,38 @@
 
 namespace App\Controller;
 
-use App\Auth\Core\UserManager;
-use App\Controller\AbstractController;
 use App\Entity\User;
 use App\Routing\Attribute\Route;
 use DateTime;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class RegisterController extends AbstractController
-{   
-    #[Route(path: "/register", name: "register", httpMethod: "GET")]
+{
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    #[Route(path: "/register", httpMethod: "GET", name: "register")]
     public function register(){
         echo $this->twig->render('Auth/Register.html.twig');
     }
 
-    #[Route(path: "/register/create", name: "create", httpMethod: "POST")]
+    /**
+     * @throws OptimisticLockException
+     * @throws SyntaxError
+     * @throws ORMException
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    #[Route(path: "/register/create", httpMethod: "POST", name: "create")]
     public function create(EntityManager $em){
-
-        
-
-        $password = $userManager->cryptPassword($_POST['password']);
+        $password = $this->_cryptPassword($_POST['password']);
         $user = (new User())
             ->setUserName($_POST['UserName'])
             ->setFirstName($_POST['FirstName'])
@@ -29,14 +41,14 @@ class RegisterController extends AbstractController
             ->setEmail($_POST['email'])
             ->setBirthDate(new DateTime())
             ->setPassword($password);
-
-
         $em->persist($user);
         $em->flush();
 
-        // check Token in Session
-        // var_dump($userManager->getUserToken()); 
-        
-        echo $this->twig->render('accueil/accueil.html.twig',(array)$userManager);
+        echo $this->twig->render('accueil/accueil.html.twig',(array)$user);
+    }
+
+    private function _cryptPassword(string $plainPassword): string
+    {
+        return password_hash($plainPassword, PASSWORD_BCRYPT, ['cost' => 10]);
     }
 }
