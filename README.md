@@ -4,13 +4,13 @@
 
 ## Note pour le prof 
 
-Nous avions pour idée d'ajouter au MVC, un système d'api automatique comme le fais Api Platform. 
+Nous avions pour idée d'ajouter au MVC, un système d'api automatique comme le fait Api Platform. 
 
 Nous avons donc fais des essais, en lisant un attribut sur les entités et créant des classes préconfigurer pour créer des api.
 
-Mais rien ne c'est montrer concluant. Par manque de temps nous avons donc abandonner le projet.
+Mais rien ne c'est montrer concluant. Par manque de temps nous avons donc abandonné le projet.
 
-Nous avons donc décider de réaliser pleins de petites fonctionnalités qui pourrais être utile pour tout type de projet.
+Nous avons donc décidé de réaliser plein de petites fonctionnalités qui pourraient être utile pour tout type de projet.
 
 Un peu comme Symfony qui intègre et propose pas mal de bibliothèque pour plein de petite fonctionnalité.
 
@@ -59,9 +59,9 @@ Vous voila prêt pour commencer :)
 
 Nous avons ajouter des dossiers pour mieux structurer le projet.
 
-**/public** : Tout les documents stocker via l'application sont stocker dans le dossier public/ . L'objectif est de les rendre disponible partout. On est également sur que tout le monde aura le droit de lire ou écrire dedans car c'est le point d'entrée de notre application.
+**/public** : Tous les documents stockés via l'application sont stocké dans le dossier public/ . L'objectif est de les rendre disponible partout. On est également sur que tout le monde aura le droit de lire ou écrire dedans car c'est le point d'entrée de notre application.
 
-**/src/services:** Contient des class de service qui ont pour but d'effectuer des taches global au projet.
+**/src/services:** Contient des class de service qui ont pour but d'effectuer des tâches globales au projet.
 
 **/src/Utils/FormError :** Une class pour gérer les erreurs dans les formulaires.
 
@@ -69,13 +69,13 @@ Nous avons ajouter des dossiers pour mieux structurer le projet.
 
 
 
-Pour commencer nous avons décider implémenter un envoie de mail paramétrable et facilement utilisable partout dans le projet.
+Pour commencer nous avons décidé d'implémenter un envoi de mail paramétrable et facilement utilisable partout dans le projet.
 
 ## Envoie de mail paramétrable
 
 ### Principe 
 
-Il est possible d'envoyer un mail. Cela consiste à envoyer un mail tout simple avec un mail d'envoie, un nom d'envoie, un mail de réception
+Il est possible d'envoyer un mail. Cela consiste à envoyer un mail tout simple avec un mail d'envoi, un nom d'envoi, un mail de réception
 un sujet et un message. Ce sont des valeurs qui sont obligatoires. Il est également possible d'y ajouter des options supplémentaires : 
 
 - Ajouter un reply-to
@@ -86,14 +86,14 @@ un sujet et un message. Ce sont des valeurs qui sont obligatoires. Il est égale
 
 ### Technique 
 
-Pour l'envoie de mail on crée donc un service qui s'appele MailService.php.
+Pour l'envoi de mail on crée donc un service qui s'appele MailService.php.
 **Il contient deux fonctions public :**
 
 1 - **La méthode sendmail() {}**
 
-La fonction initialise un header qui est l'entête de notre mail. Cette entête est découper en deux partie :
+La fonction initialise un header qui est l'entête de notre mail. Cet entête est découpé en deux parties :
 
-- Une entête contenant les informations basics du mail qui sont initialiser via la méthode private _getMailHeaders(). 
+- Une entête contenant les informations basics du mail qui sont initialisées via la méthode private _getMailHeaders(). 
 
   ```php
   private function _getMailHeaders(string $fromName, string $fromMail, string $replyToMail , array $cc): string
@@ -110,13 +110,13 @@ La fonction initialise un header qui est l'entête de notre mail. Cette entête 
   }
   ```
 
-  *Note : MIME-Version permet d’indiquer que le contenu du message est formaté en MIME c'est un standard pour l'envoie de mail*.
+  *Note : MIME-Version permet d’indiquer que le contenu du message est formaté en MIME c'est un standard pour l'envoi de mail*.
 
-- L'autre partie de entête qui est initialiser directement dans la fonction et qui permet de renseigner le type de contenus du mail. Dans le cas de l'envoie d'un mail simple il suffit de mettre du texte ou html. Dans le cas d'un mail avec une pièce jointe on dois mettre du multipart.
+- L'autre partie d'entête  qui est initialisé  directement dans la fonction et qui permet de renseigner le type de contenus du mail. Dans le cas de l'envoi d'un mail simple il suffit de mettre du texte ou html. Dans le cas d'un mail avec une pièce jointe on doit mettre du multipart.
 
-1-2 - On voulais également inclure la possibilité d'envoyer des Template dans le mail. Pour permettre d'envoyer des mail structurer. Pour cela on vérifie si le mail dois être envoyer avec un Template prédéfinis. Si oui, on lis le fichier html correspondant. 
+1-2 - On voulait également inclure la possibilité d'envoyer des Template dans le mail. Pour permettre d'envoyer des mails structurer. Pour cela on vérifie si le mail doit être envoyé avec un template prédéfini. Si oui, on lit le fichier HTML correspondant. 
 
-Pour récupérer plus simplement le répertoire de Template et l'adapter à tout les OS et projet on crée une méthode : 
+Pour récupérer plus simplement le répertoire de Template et l'adapter à tous les OS et projet on crée une méthode : 
 
 ```php
   /**
@@ -135,14 +135,14 @@ Pour récupérer plus simplement le répertoire de Template et l'adapter à tout
     }
 ```
 
-Le but de la méthode est de récupérer le répertoire du projet pour avoir accès à l'ensemble des fichiers. Puis en fonction de l'OS de l'utilisateur on vient rajouter le répertoire qui nous intéresse ici Template/mail/custom où les Template de mail custom doivent être ranger. On y a créer un Template pour tester que cela marche bien. 
+Le but de la méthode est de récupérer le répertoire du projet pour avoir accès à l'ensemble des fichiers. Puis en fonction de l'OS de l'utilisateur on vient rajouter le répertoire qui nous intéresse ici Template/mail/custom où les Template de mail custom doivent être rangés. On y a créé un template pour tester que cela marche bien. 
 
 1-3 - Puis on envoie le mail grâce à la méthode native de PHP qui est mail() (https://www.php.net/manual/fr/function.mail.php)
 
 1-4 - Enfin si l'option pour ajouter le mail en BDD est a true alors on ajoute le mail en BDD via la méthode private _createMailInBDD(). On levé des exceptions si cela échoue. *(Voir section suivis de mail)*
 
 **2 - La méthode sendMailWithAttach(){}**
-Cette fonction fais la même chose que la première. Cependant elle permet d'envoyer une pièce jointe. Nous sommes partie du principe que c'était une fonctionnalité indispensable dans l'envoie d'un mail. Description : 
+Cette fonction fait la même chose que la première. Cependant elle permet d'envoyer une pièce jointe. Nous sommes partie du principe que c'était une fonctionnalité indispensable dans l'envoi d'un mail. Description : 
 
 - On ajoute un boundary au header de la requête qui est une clé aléatoire de limite pour définir un séparateur et on précise l'encodage en UTF-8 pour éviter les problèmes d'encodage :
 
@@ -156,9 +156,9 @@ $headers .= 'Content-Type: multipart/mixed;boundary='.$boundary."\r\n";
 $headers .='Content-Transfer-Encoding: 8bit' ."\r\n";
 ```
 
-- Puis on regarde si la pièce jointe est dans le dossier public/mailAttachment qui est censé contenir toute les pièce jointe importer. Le but du répertoire est de savoir exactement où ce trouve les fichiers pièce jointe où les enregistre et où les récupérer.
+- Puis on regarde si la pièce jointe est dans le dossier public/mailattachment qui est censé contenir toutes les pièces jointes importer. Le but du répertoire est de savoir exactement où se trouvent les fichiers pièce jointe où les enregistre et où les récupérer.
 
-- Puis on lis le fichier et l'encode proprement pour éviter les problèmes lors de l'envoie : 
+- Puis on lit le fichier et l'encode proprement pour éviter les problèmes lors de l'envoi : 
 
   ```php
   if (file_exists($fullFileName))
@@ -181,11 +181,11 @@ $headers .='Content-Transfer-Encoding: 8bit' ."\r\n";
 
 - Enfin on envoie le mail et enregistre en BDD
 
-Cela étant fais nous avons voulu crée des formulaire pour l'envoie de mail.
+Cela étant faits-nous avons voulu créé des formulaires pour l'envoi de mail.
 
 **3- Mail Controller** 
 
-Pour ce faire nous avons créer un Controller MailController avec deux routes : 
+Pour ce faire nous avons créé un Controller MailController avec deux routes : 
 
 -  **Accéder au formulaire :** #[Route(path: "/mail", httpMethod: "GET", name: "showMail")]
 -  **Lors du submit du formulaire :** #[Route(path: "/mail/create", httpMethod: "POST", name: "createMail")]
@@ -193,7 +193,7 @@ Pour ce faire nous avons créer un Controller MailController avec deux routes :
 
 Dans le Controller la méthode la plus importante est createMail(). Analysons cette méthode : 
 
-3-1 Tout d'abord on vérifie que les informations sont bien envoyé. On vérifie également que les informations obligatoires sont envoyé et quelles ne contiennent pas d'erreur : 
+3-1 Tout d'abord on vérifie que les informations sont bien envoyées. On vérifie également que les informations obligatoires sont envoyées et qu'elles ne contiennent pas d'erreur : 
 
 ```php
 // Verification des champs obligatoires
@@ -202,16 +202,15 @@ $tabObligatoire = array($_POST['senderName'], $_POST['senderMail'] , $_POST['rec
 $errorEmpty = $error->validateEmpty($tabObligatoire);
 ```
 
-Pour gérer les erreurs dans le formulaire on a décider de créer une class src/Utils/FormError.php qui valide les données rentrer. Si il y a une erreur il retourne un message d'erreur. L'objectif était de faire une class réutilisable et de pas surcharger le Controller de méthode qui ne lui corresponde pas forcement et qui peuvent être utilise dans d'autre Controller.
+Pour gérer les erreurs dans le formulaire on a décidé de créer une class src/utils/formerror.php qui valide les données rentrer. S'il y a une erreur il retourne un message d'erreur. L'objectif était de faire une class réutilisable et de pas surchargez-le Contrôler de méthode qui ne lui corresponde pas forcément et qui peuvent être utilisés dans d'autres Contrôler.
 
 *Note : Toute les erreurs générer sont renvoyer au formulaire avec un message d'erreur spécifique.*
 
 3-2 On vérifie ensuite si la pièce jointe est importée. Si elle l'est alors on utilise la méthode _uploadFile(): 
 
-Cette méthode à pour but de vérifier si il y a des erreurs, et si le fichier respect les règles (image ou PDF) et pas trop grand.
+Cette méthode à pour but de vérifier s'il y a des erreurs, et si le fichier respect les règles (image ou PDF) et pas trop grand.
 
-L'objectif est éviter d'envoyer des fichier qui pourrais être des scripts ou des exécutable. Aussi des fichiers trop lourd qui ferais planter l'application.
-Si les conditions sont respectées on déplace le fichier importé dans le répertoire ou sont censé être les fichier en PJ -> public/mailAttachment 
+L'objectif est évité d'envoyer des fichiers qui pourrait être des scripts ou des exécutable. Aussi des fichiers trop lourds qui feraient planter l'application.Si les conditions sont respectées on déplace le fichier importé dans le répertoire ou son censé être les fichiers en PJ -> public/mailattachment 
 
 ```php
 // Vérifie le type du fichier
@@ -225,9 +224,9 @@ if(in_array($filetype, $allowed)){
      move_uploaded_file($_FILES["formFile"]["tmp_name"], $uploadDirFile);
 ```
 
-*Note : A noter que si les conditions ne sont pas respecter cela nous retourne sur la page du formulaire, mais les valeurs renseigner sur le premier formulaire sont retourner dans leurs input. Le but est de ne pas d'avoir tout retaper les informations du formulaire et de voir notre faute.*
+*Note : A noter que si les conditions ne sont pas respectées cela nous retourne sur la page du formulaire, mais les valeurs renseigner sur le premier formulaire sont retourné dans leurs inputs. Le but est de ne pas d'avoir tout retapé les informations du formulaire et de voir notre faute.*
 
-3-3 Quand 3-1 et 3-2 sont vérifier et valider on s'occupe de transformer les adresses mails renseignées dans le CC en tableau, pour pouvoir les envoyer plus facilement après. On utilise la méthode _fillArrayCC(), qui explode la chaine de l'input cc et qui à chaque ',' associe l'email à un index du tab . On voulais vraiment pouvoir renseigner plusieurs adresses en CC pour permettre l'envoie du mail à plusieurs personnes : 
+3-3 Quand 3-1 et 3-2 sont vérifié et validé on s'occupe de transformer les adresses mails renseignées dans le CC en tableau, pour pouvoir les envoyer plus facilement après. On utilise la méthode _fillarraycc(), qui explode la chaine de l'input cm3 et qui a chacune "," associe l'email à un index du tab . On voulait vraiment pouvoir renseigner plusieurs adresses en CC pour permettre l'envoi du mail à plusieurs personnes :  
 
 ```php
 private function _fillArrayCC(): array
@@ -247,22 +246,20 @@ $arrayMailCc = $this->_fillArrayCC();
 
 3-4 On vérifie ensuite les erreurs dans le formulaire, comme l'exactitude du format des adresses mails ou la taille du texte dans les inputs (ne pas excéder 200 caractères ). Cela grâce à la méthode _validateFormError().
 
-3-5 Si il y a aucune erreur alors on envoie les mails avec ou sans pièce jointe en fonction du formulaire. Puis cela nous renvoie sur une la page mail/successSendMail.html.twig qui confirme le bon envoie du mail.
+3-5 S'il y a aucune erreur alors on envoie les mails avec ou sans pièce jointe en fonction du formulaire. Puis cela nous renvoie sur une la page mail/successSendMail.html.twig qui confirme le bon envoie du mail.
 
 **4 - Template **
-Nous avons créer un dossier mail/ dans le Template ou nous avons mis le fichier formulaire dans /form/createMail.html.twig.
-*Note : Pour faciliter le projet et le rendre plus esthétique nous avons utiliser Bootstrap sur l'ensemble du projet*.
-Le formulaire contient tout les champs possible pour l'envoie du mail. Nous n'avons juste pas mis une sélection de Template personnalisé par manque de temps, mais cela pourrais être développer.
+Nous avons créé un dossier mail/ dans le template ou nous avons mis le fichier formulaire dans /form/createMail.html.twig.*Note : pour faciliter le projet et le rendre plus esthétique nous avons utilisé Bootstrap sur l'ensemble du projet*.Le formulaire contient tous les champs possibles pour l'envoi du mail. Nous n'avons juste pas mis une sélection de Template personnalisé par manque de temps, mais cela pourrait être développé.
 
 
 
 ## Suivis des mail
 
-Apres avoir réaliser l'envoie du mail, nous avons trouver cela dommage d'envoyer des mails et de ne pas garder une trace de ceci. Cela pourrais être très utile d'avoir un suivis des mails pour savoir quand, à qui, pourquoi et comment à était envoyer les mails.
+Après avoir réalisé l'envoi du mail, nous avons trouvé cela dommage d'envoyer des mails et de ne pas garder une trace de ceci. Cela pourrait être très utile d'avoir un suivi des mails pour savoir quand, à qui, pourquoi et comment ait été envoyer les mailss.
 
-Pour cela nous avons donc décider de sauvegarder les mail en BDD avec doctrine. Nous avons créer une entité Mail qui as tout les champs des mails que l'on envoyer + un champs dateSend qui permet de savoir la date d'envoie.
+Pour cela nous avons donc décidé de sauvegarder les mails en BDD avec doctrine. Nous avons créé une entité Mail qui a tous les champs des mails que l'ont envoyé + un champ datesend qui permet de savoir la date d'envoi.
 
-Tout ce passe dans le service, juste après l'envoie du mail comme on l'as vu précédemment.
+Tout ce passe dans le service, juste après l'envoi du mail comme on l'as vu précédemment.
 
 Pour pouvoir visualiser tout ca nous avons fais une méthodes avec un route dans le Mail Controller : 
 #[Route(path: "/mails", httpMethod: "GET", name: "showMails")]
@@ -294,7 +291,7 @@ Ce Template utilise un tableau Bootstrap que l'on remplis en bouclant sur nos ma
 
 ## Convert File 
 
-Nous avons également décidé d'intégrer un moyen de convertir des fichiers. Nous avons développer qu'une seul conversion pour le moment celle de csv en xlsx. Si nous avons choisis cette fonctionnalité et ce type de fichier, c'est car c'est l'une des plus fréquente conversion de fichier. De plus les conversion de fichier est quelque chose de courant dans des projets de développement web.
+Nous avons également décidé d'intégrer un moyen de convertir des fichiers. Nous n'avons développé qu'une seule conversion pour le moment celle de Csv en xlsx. Si nous avons choisi cette fonctionnalité et ce type de fichier, c'est car c'est l'une des plus fréquentes conversions de fichier. De plus les conversions de fichier sont quelque chose de courantes dans des projets de développement web.
 
 Pour ce faire nous avons créer un service ConvertCsvToExcelService qui contient la méthode convertCsvToExel() : 
 
@@ -322,13 +319,13 @@ public function convertCsvToExel(string $fileName): string
     }
 ```
 
-Cette méthode utilise la bibliothèque PhpSpreadsheet qui est l'une des plus réputé dans ce genre de conversion.
+Cette méthode utilise la bibliothèque PhpSpreadsheet qui est l'une des plus réputés dans ce genre de conversion.
 
-La méthode lis un csv et charge le fichier pour ensuite générer un xlsx. On donne le même nom au xlsx qu'au csv.
+La méthode lit un Csv et charge le fichier pour ensuite générer un xlsx. On donne le même nom au xlsx qu'au Csv.
 
-Il enregistre ce fichier au même endroit ou ce trouve le csv c'est a dire dans public/convertFile qui comme public/mailAttachment est un dossier comportant les fichier converti.
+Il enregistre ce fichier au même endroit ou ce trouve le csv c'est a dire dans public/convertFile qui comme public/mailAttachment est un dossier comportant les fichiers convertis.
 
-Pour utiliser le service on fais un Controller ConvertFileController. Comme pour le mail on fais un Template pour afficher un formulaire qui contient un input file.
+Pour utiliser le service on fait un contrôler ConvertFileController. Comme pour le mail on fait un template pour afficher un formulaire qui contient un input filé.
 
 Ce Controller contient 2 routes : 
 
@@ -344,7 +341,7 @@ La méthode de conversion est très simple :
 
 ## Download File 
 
-Apres avoir réaliser la conversion de fichier, nous nous sommes rendu compte qu'il pourrais être intéressant de créer un service pour télécharger des fichier, qu'ils soient stockés en local dans le projet ou via une url http.
+Après avoir réalisé la conversion de fichier, nous nous sommes rendu compte qu'il pourrait être intéressant de créer un service pour télécharger des fichiers, qu'ils soient stockés en local dans le projet ou via une URL http.
 
 Pour ce faire on a créer le service DownloadFileService : 
 
@@ -367,7 +364,7 @@ public function downloadLocalFile(string $filePath) {
 }
 ```
 
-- downloadExterneFile() qui utilise curl une bibliothèque pour le transfert de donnée en ligne (https://curl.se/). Elle contient une initialisation de curl. l'enregistrement du fichier en local puis téléchargement de celui ci. On a également une validation de l'url envoyer avec filter_var de php . (https://www.php.net/manual/fr/function.filter-var.php) qui filtre une variable avec un filtre spécifier : 
+- DownloadExterneFile() qui utilise à curl une bibliothèque pour le transfert de données en ligne (https://curl.se/). Elle contient une initialisation de curl. l'enregistrement du fichier en local puis téléchargement de celui-ci. On a également une validation de l'URL envoyer avec filter var de Php . (https://www.php.net/manual/fr/function.filter-var.php) qui filtre une variable avec un filtre spécifier : 
 
 ```php
 ..
@@ -387,7 +384,7 @@ Tout comme Mail et ConvertFile nous avons réalisé un Controller DownloadContro
 
 ## Authentification/Login 
 
-Comme nous voulions continuer le projet nous avons réaliser le début d'une authentification simple, il manque la gestion de session et token *(de base nous voulions mais nous n'avons pas eu le temps de finir)* Nous avons donc fais un simple login / registrer sans même une gestion des erreurs. 
+comme nous voulions continuer le projet nous avons réalisé le début d'une authentification simple, il manque la gestion de session et token *(de base nous voulions mais nous n'avons pas eu le temps de finir)* Nous avons donc fait un simple login / registrer sans même une gestion des erreurs. 
 
 Pour l'authentification on hash le mots de passe pour pas le stocker en brut dans la BDD à l'aide de la fonction : 
 
@@ -423,7 +420,7 @@ Pour utiliser et Bootstrap via un cdn dans l'ensemble du projet et alléger le c
 
 Le principe est d'avoir un fichier nous servant de base , le base.html.twig.
 
-On lui donner la structure d'un fichier html classique, mais on définie des {% block %} qui sont des endroit ou le code peut être surcharger.
+On lui donner la structure d'un fichier html classique, mais on définie des {% block %} qui sont des endroits ou le code peut être surchargé.
 
 **On définis :** 
 
@@ -432,7 +429,7 @@ On lui donner la structure d'un fichier html classique, mais on définie des {% 
 - Un block pour le contenus 
 - Un block pour le footer de la page.
 
-Ainsi dans toute nos pages si l'on souhaite ajouter un nouveau titre, il nous suffit étendre de la base avec {% extends 'base.html.twig' %}
+Ainsi dans toutes nos pages si l'on souhaite ajouter un nouveau titre, il nous suffit étendre de la base avec {% extends 'base.html.twig' %}
 Puis de redéfinir notre {% block title %}Titre de la page{% endblock %}
 
 **Exemple :** 
@@ -454,18 +451,18 @@ Puis de redéfinir notre {% block title %}Titre de la page{% endblock %}
 
 **Page Utilitaires :** 
 
-Nous avons réaliser une page accueil regroupant la liste des fonctionnalités développer. Plus pratique pour l'utilisateur
+Nous avons réalisé une page accueille regroupant la liste des fonctionnalités développées. Plus pratique pour l'utilisateur
 
-Puis nous avons fais une page custom pour les pages not found (voir exemple plus haut). Ca donne un charme une identité
+Puis nous avons faits une page custom pour les pages not found (voir exemple plus haut). Ca donne un charme une identité
 
 ## Point a améliorer et autres recherches 
 
 - Ajouter plusieurs pièces jointes au mail
-- Ajouter les Template préenregistre dans le form du mail
-- Url pas trouver dans download file url
+- Ajouter les Template préenregistre dans la forme du mail
+- URL par trouver d'en download file URL
 - Gestion des erreurs dans login et registrer
 - Ajouter des moyens de conversion différents
-- Upload de fichier généraliser
-- Variable Global pour accéder au répertoire qui contiennent des fichiers partage dans public
-- Créer une class request pour récupérer les valeurs d'une requetés.
+- Upload de fichier généralisés
+- Variable Globale pour accéder au répertoire qui contient des fichiers partage dans public
+- Créer une Class request pour récupérer les valeurs d'un requeté.
 - Faire des redirections sur des routes
