@@ -22,9 +22,9 @@ MySQL Version 5.7.31
 
 Composer 2.10
 
-### **Commande à exécuter **
+### Commande à exécuter
 
-#### 	**Installer les dépendance **
+#### 	Installer les dépendance 
 
 ```
 composer install
